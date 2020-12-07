@@ -14,7 +14,7 @@ public class MenuScreen extends BaseScreen {
 
     Texture img;
     Texture imgbkg;
-    Vector2 v,p,p1,a;
+    Vector2 v1,v,p,p1,a;
 
     /**
      * Called when this screen becomes the current screen for a {@link Game}.
@@ -25,7 +25,7 @@ public class MenuScreen extends BaseScreen {
 
         img = new Texture("fball-4242.png");
         imgbkg = new Texture("backgroung1.png");
-    //    v = new Vector2(1,1);
+        v1 = new Vector2(0,0);
         p = new Vector2(0,0);
         p1 = new Vector2(0,0);
       //  a = new Vector2(0.1f,0.1f);
@@ -41,13 +41,17 @@ public class MenuScreen extends BaseScreen {
         super.render(delta);
         Gdx.gl.glClearColor(0.2777f, 0.23f, 0.46f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        v1.x = p1.x-p.x;
+        v1.y = p1.y-p.y;
         float dx = p1.x-p.x;
         float dy = p1.y-p.y;
-        if (dx != 0) {
-            if (dx > 0) p.x++; else p.x--;
+        if (dx != 0 || dy != 0) {
+            v1.nor();
+            p.add(v1);
+      //      if (dx > 0) p.x++; else p.x--;
         }
         if (dy != 0) {
-            if (dy > 0) p.y++; else p.y--;
+      //      if (dy > 0) p.y++; else p.y--;
         }
 
         batch.begin();
