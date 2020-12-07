@@ -45,14 +45,15 @@ public class MenuScreen extends BaseScreen {
         v1.y = p1.y-p.y;
         float dx = p1.x-p.x;
         float dy = p1.y-p.y;
+  //
         if (dx != 0 || dy != 0) {
             v1.nor();
             p.add(v1);
       //      if (dx > 0) p.x++; else p.x--;
         }
-        if (dy != 0) {
-      //      if (dy > 0) p.y++; else p.y--;
-        }
+    //    if (dy != 0) {
+    //  //      if (dy > 0) p.y++; else p.y--;
+        //   }
 
         batch.begin();
         batch.draw(imgbkg, 0, 0, 1000,1000);
