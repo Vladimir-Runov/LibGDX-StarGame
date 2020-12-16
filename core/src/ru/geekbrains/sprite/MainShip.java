@@ -33,7 +33,8 @@ public class MainShip extends Sprite {
     private int leftPointer = INVALID_POINTER;
     private int rightPointer = INVALID_POINTER;
     private Sound soundShoot;
-
+    private boolean shootAuto;
+    private  int shootdelay = 100;
     public MainShip(TextureAtlas atlas, BulletPool bulletPool) {
         super(atlas.findRegion("main_ship"), 1, 2, 2);
 
@@ -43,7 +44,8 @@ public class MainShip extends Sprite {
         v = new Vector2();
         v0 = new Vector2(0.5f, 0);
         soundShoot  = Gdx.audio.newSound(Gdx.files.internal("sounds/bullet.wav"));
-
+        shootAuto = false;
+        shootdelay = 10;
     }
 
     @Override
@@ -56,6 +58,10 @@ public class MainShip extends Sprite {
     @Override
     public void update(float delta) {
         pos.mulAdd(v, delta);
+        if (shootAuto)
+            if (shootdelay-- <= 0)
+                shoot();
+
         if (getRight() > worldBounds.getRight()) {
             setRight(worldBounds.getRight());
             stop();
@@ -85,6 +91,7 @@ public class MainShip extends Sprite {
                 break;
             case Input.Keys.SPACE:
                 shoot();
+                shootAuto = !shootAuto;
                 break;
         }
         return false;
@@ -153,10 +160,12 @@ public class MainShip extends Sprite {
 
     private void moveLeft() {
         v.set(v0).rotate(180);
+
     }
 
     private void moveRight() {
         v.set(v0);
+
     }
 
     private void stop() {
@@ -164,10 +173,11 @@ public class MainShip extends Sprite {
     }
 
     private void shoot() {
+        shootdelay = 10;
         Bullet bullet = bulletPool.obtain();
         bullet.set(this, bulletRegion, pos, bulletV, 0.01f, worldBounds, 1);
 
         long id = soundShoot.play(0.60f);
-        soundShoot.setPitch(id, 2);
+        //soundShoot.setPitch(id, 2);
     }
 }
