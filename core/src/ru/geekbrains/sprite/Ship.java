@@ -11,6 +11,13 @@ import ru.geekbrains.math.Rect;
 Реализовать спрайт корабля
 Разрезать текстуру корабля на 2 части
 *** Cделать управление кораблём с помощью тача и/или клавиатуры
+-------
+Урок 5 -
+Разобраться с классами
+  Sound(http://www.libgdx.ru/2013/10/sound-effects.html)
+и Music(http://www.libgdx.ru/2013/10/streaming-music.html)
+(можно мне вопросы задавать) и реализовать фоновую музыку и звуки выстрелов
+Реализовать автоматическую стрельбу корабля
  */
 public class Ship extends Sprite {
     private Vector2 touch,tmp,v;
