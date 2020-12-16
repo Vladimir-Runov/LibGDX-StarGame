@@ -12,7 +12,7 @@ import ru.geekbrains.math.Rect;
 Разрезать текстуру корабля на 2 части
 *** Cделать управление кораблём с помощью тача и/или клавиатуры
 -------
-Урок 5 -
+Урок 5 -  Сдайте задание до: 21 дек., 19:00 +03:00
 Разобраться с классами
   Sound(http://www.libgdx.ru/2013/10/sound-effects.html)
 и Music(http://www.libgdx.ru/2013/10/streaming-music.html)
