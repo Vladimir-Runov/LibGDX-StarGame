@@ -20,7 +20,6 @@ public class Ship extends Sprite {
     public Ship()
     {
         super();
-
         imgSh  = new Texture("textures/mainAtlas.png");
         regions = new TextureRegion[2];
         regions[0] = new TextureRegion(imgSh, 911,86,198,243);
