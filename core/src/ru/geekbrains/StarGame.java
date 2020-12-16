@@ -1,33 +1,35 @@
 package ru.geekbrains;
 
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 
-public class StarGame extends ApplicationAdapter {
-	SpriteBatch batch;
-	Texture img;
-	
+import ru.geekbrains.screen.MenuScreen;
+
+public class StarGame extends Game {
+					//extends ApplicationAdapter {
+	/**
+	 * Called when the {@link Application} is first created.
+	 */
 	@Override
-	public void create () {
-		batch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");
+	public void create() {
+		setScreen(new MenuScreen(this));
 	}
 
-	@Override
-	public void render () {
-		Gdx.gl.glClearColor(0.2777f, 0.23f, 0.46f, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		batch.begin();
-		batch.draw(img, 10, 10, 100,100);
-		batch.end();
-	}
-	
-	@Override
-	public void dispose () {
-		batch.dispose();
-		img.dispose();
-	}
+
+//	@Override
+//	public void create () {
+//	}
+//
+//	@Override
+//	public void render () {
+//	}
+//
+//	@Override
+//	public void dispose () {
+//	}
 }
