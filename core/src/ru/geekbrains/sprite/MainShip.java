@@ -160,12 +160,10 @@ public class MainShip extends Sprite {
 
     private void moveLeft() {
         v.set(v0).rotate(180);  shootAuto = true;
-
     }
 
     private void moveRight() {
         v.set(v0); shootAuto = true;
-
     }
 
     private void stop() {
