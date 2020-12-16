@@ -12,8 +12,6 @@ public class Background extends Sprite {
         super(new TextureRegion(region));
     }
 
-
-
     @Override
     public void resize(Rect worldBounds) {
         setHeightProportion(worldBounds.getHeight());
