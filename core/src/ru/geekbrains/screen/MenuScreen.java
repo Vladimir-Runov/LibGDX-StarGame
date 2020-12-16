@@ -90,14 +90,14 @@ public class MenuScreen extends BaseScreen {
         super.dispose();
     }
 
-    /**
-     * Called when a key was pressed
-     */
-    @Override
-    public boolean keyDown(int keycode)
-    {
-        return background.keyDown(keycode);
-    }
+ //   /**
+ //    * Called when a key was pressed
+ //    */
+ //   @Override
+ //   public boolean keyDown(int keycode)
+//    {
+//        return background.keyDown(keycode);
+//    }
 
     /**
      * Called when the screen was touched or a mouse button was pressed. The button parameter will be {@link Buttons#LEFT} on iOS.
