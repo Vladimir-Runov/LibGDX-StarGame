@@ -10,22 +10,23 @@ import com.badlogic.gdx.math.Vector2;
 import ru.geekbrains.base.Sprite;
 import ru.geekbrains.math.Rect;
 import ru.geekbrains.pool.BulletPool;
+import ru.geekbrains.pool.ExplosionPool;
 
-public class MainShip extends Sprite {
+public class MainShip extends Ship {
 
     private static final float HEIGHT = 0.15f;
     private static final float BOTTOM_MARGIN = 0.05f;
 
     private static final int INVALID_POINTER = -1;
 
-    private final BulletPool bulletPool;
-    private TextureRegion bulletRegion;
-    private Vector2 bulletV;
+//    private final BulletPool bulletPool;
+//    private TextureRegion bulletRegion;
+//    private Vector2 bulletV;
 
-    private final Vector2 v;
-    private final Vector2 v0;
+//    private final Vector2 v;
+//    private final Vector2 v0;
 
-    private Rect worldBounds;
+ //   private Rect worldBounds;
 
     private boolean pressedLeft;
     private boolean pressedRight;
@@ -35,17 +36,30 @@ public class MainShip extends Sprite {
     private Sound soundShoot;
     private boolean shootAuto;
     private  int shootdelay = 100;
-    public MainShip(TextureAtlas atlas, BulletPool bulletPool) {
-        super(atlas.findRegion("main_ship"), 1, 2, 2);
 
-        this.bulletPool = bulletPool;
+    private static final int HP = 1;
+    private static final float RELOAD_INTERVAL = 0.2f;
+
+    public MainShip(TextureAtlas atlas, BulletPool bulletPool, ExplosionPool explosionPool) {
+        //super(atlas.findRegion("main_ship"), 1, 2, 2);
+        super(atlas.findRegion("main_ship"), 1, 2, 2, bulletPool, explosionPool);
+
         bulletRegion = atlas.findRegion("bulletMainShip");
+        bulletSound = Gdx.audio.newSound(Gdx.files.internal("sounds/laser.wav"));
         bulletV = new Vector2(0, 0.5f);
+        bulletPos = new Vector2();
+        bulletHeight = 0.01f;
+
         v = new Vector2();
         v0 = new Vector2(0.5f, 0);
-        soundShoot  = Gdx.audio.newSound(Gdx.files.internal("sounds/bullet.wav"));
-        shootAuto = false;
-        shootdelay = 10;
+        reloadInterval = RELOAD_INTERVAL;
+        hp = HP;
+
+////        this.bulletPool = bulletPool;
+//       soundShoot  = Gdx.audio.newSound(Gdx.files.internal("sounds/bullet.wav"));
+//        shootAuto = false;
+//        shootdelay = 10;
+        damage = 1;
     }
 
     @Override
@@ -57,11 +71,8 @@ public class MainShip extends Sprite {
 
     @Override
     public void update(float delta) {
-        pos.mulAdd(v, delta);
-        if (shootAuto)
-            if (shootdelay-- <= 0)
-                shoot();
-
+        super.update(delta);
+        bulletPos.set(pos.x, pos.y + getHalfHeight());
         if (getRight() > worldBounds.getRight()) {
             setRight(worldBounds.getRight());
             stop();
@@ -70,11 +81,6 @@ public class MainShip extends Sprite {
             setLeft(worldBounds.getLeft());
             stop();
         }
-    }
-
-
-    public void dispose() {
-        soundShoot.dispose();
     }
 
     public boolean keyDown(int keycode) {
@@ -88,10 +94,6 @@ public class MainShip extends Sprite {
             case Input.Keys.A:
                 pressedLeft = true;
                 moveLeft();
-                break;
-            case Input.Keys.SPACE:
-                shoot();
-                shootAuto = !shootAuto;
                 break;
         }
         return false;
@@ -158,25 +160,41 @@ public class MainShip extends Sprite {
         return false;
     }
 
+    public void dispose() {
+        bulletSound.dispose();
+    }
+
+    public boolean isBulletCollision(Bullet bullet) {
+        return !(bullet.getRight() < getLeft()
+                || bullet.getLeft() > getRight()
+                || bullet.getBottom() > pos.y
+                || bullet.getTop() < getBottom());
+    }
+
     private void moveLeft() {
-        v.set(v0).rotate(180);  shootAuto = true;
+        v.set(v0).rotate(180);
     }
 
     private void moveRight() {
-        v.set(v0); shootAuto = true;
+        v.set(v0);
     }
 
     private void stop() {
         v.setZero();
-        shootAuto = false;
     }
+    public void startNewGame() {
+        stop();
 
-    private void shoot() {
-        shootdelay = 10;
-        Bullet bullet = bulletPool.obtain();
-        bullet.set(this, bulletRegion, pos, bulletV, 0.01f, worldBounds, 1);
+        hp = HP;
+        flushDestroy();
 
-        long id = soundShoot.play(0.60f);
-        //soundShoot.setPitch(id, 2);
+        pressedLeft =false;
+        pressedRight=false;
+        leftPointer=INVALID_POINTER;
+        rightPointer=INVALID_POINTER;
+
+        this.pos.x = worldBounds.pos.x;
+        frame = 0;
+        damageAnimateTimer = DAMAGE_ANIMATE_INTERVAL;
     }
 }

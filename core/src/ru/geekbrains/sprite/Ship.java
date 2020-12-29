@@ -1,11 +1,14 @@
 package ru.geekbrains.sprite;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 import ru.geekbrains.base.Sprite;
 import ru.geekbrains.math.Rect;
+import ru.geekbrains.pool.BulletPool;
+import ru.geekbrains.pool.ExplosionPool;
 
 /*
 Реализовать спрайт корабля
@@ -20,21 +23,82 @@ import ru.geekbrains.math.Rect;
 Реализовать автоматическую стрельбу корабля
  */
 public class Ship extends Sprite {
-    private Vector2 touch,tmp,v;
-    private static final float V_LEN = 0.1f;
-    Texture imgSh;
+    protected static final float DAMAGE_ANIMATE_INTERVAL = 0.1f;
 
-    public Ship()
-    {
-        super();
-        imgSh  = new Texture("textures/mainAtlas.png");
-        regions = new TextureRegion[2];
-        regions[0] = new TextureRegion(imgSh, 911,86,198,243);
-        regions[1] = new TextureRegion(imgSh, 1119,89,198,243);
+    protected TextureRegion bulletRegion;
+    protected Sound bulletSound;
+    protected Vector2 bulletV;
+    protected Vector2 bulletPos;
 
-        v = new Vector2();
-        tmp = new Vector2();
-        touch = new Vector2();
+    protected float bulletHeight;
+    protected int damage;
+    protected int hp;
+
+    protected Vector2 v;
+    protected Vector2 v0;
+
+    protected Rect worldBounds;
+
+    protected float reloadInterval;
+    protected float reloadTimer;
+    protected float damageAnimateTimer;
+
+    private final BulletPool bulletPool;
+    private final ExplosionPool explosionPool;
+
+    public Ship(BulletPool bulletPool, ExplosionPool explosionPool) {
+        this.bulletPool = bulletPool;
+        this.explosionPool = explosionPool;
+        damageAnimateTimer = DAMAGE_ANIMATE_INTERVAL;
+        v = new Vector2(0,0);
+    }
+
+    public Ship(TextureRegion region, int rows, int cols, int frames, BulletPool bulletPool, ExplosionPool explosionPool) {
+        super(region, rows, cols, frames);
+        this.bulletPool = bulletPool;
+        this.explosionPool = explosionPool;
+        damageAnimateTimer = DAMAGE_ANIMATE_INTERVAL;
+    }
+
+    @Override
+    public void update(float delta) {
+        pos.mulAdd(v, delta);
+        reloadTimer += delta;
+        if (reloadTimer >= reloadInterval) {
+            reloadTimer = 0f;
+            shoot();
+        }
+        damageAnimateTimer += delta;
+        if (damageAnimateTimer >= DAMAGE_ANIMATE_INTERVAL) {
+            frame = 0;
+        }
+    }
+
+
+    public void damage(int damage) {
+        this.hp -= damage;
+        if (hp <= 0) {
+            hp = 0;
+            destroy();
+        }
+        frame = 1;
+        damageAnimateTimer = 0f;
+    }
+
+
+    public int getDamage() {
+        return damage;
+    }
+
+    private void shoot() {
+        bulletSound.play(0.5f);
+        Bullet bullet = bulletPool.obtain();
+        bullet.set(this, bulletRegion, bulletPos, bulletV, bulletHeight, worldBounds, damage);
+    }
+
+    private void boom() {
+        Explosion explosion = explosionPool.obtain();
+        explosion.set(this.pos, getHeight());
     }
 
     @Override
@@ -43,26 +107,24 @@ public class Ship extends Sprite {
         setHeightProportion(0.3f);
     }
 
-    @Override
-    public void update(float delta) {
-        tmp.set(touch);
-        if (tmp.sub(pos).len() < V_LEN)
-            pos.set(touch);
-        else
-            pos.add(v);
-        //super.update(delta);
-    }
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer, int button) {
-        this.touch.set(touch);
-        v.set(touch.cpy().sub(pos)).setLength(V_LEN);
+ //       this.touch.set(touch);
+  //      v.set(touch.cpy().sub(pos)).setLength(V_LEN);
         return false; //super.touchDown(touch, pointer, button);
     }
 
   //  @Override
     public void dispose() {
-        imgSh.dispose();
-    //    super.dispose();
+//        imgSh.dispose();
+        super.destroy();
+        boom();
+        //    super.dispose();
+    }
+    @Override
+    public void destroy() {
+        super.destroy();
+        boom();
     }
 }

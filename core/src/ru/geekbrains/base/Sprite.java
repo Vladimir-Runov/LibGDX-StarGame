@@ -8,12 +8,12 @@ import ru.geekbrains.math.Rect;
 import ru.geekbrains.utils.Regions;
 
 public class Sprite extends Rect {
-
     private float angle;
     private float scale = 1;
     protected TextureRegion[] regions;
-    private int frame;
+    protected int frame;
     private boolean destroyed;
+    protected int damage;
 
     public Sprite() {
     }
@@ -91,4 +91,5 @@ public class Sprite extends Rect {
     public void flushDestroy() {
         destroyed = false;
     }
+
 }
